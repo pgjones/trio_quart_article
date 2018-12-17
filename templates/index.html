@@ -1,0 +1,33 @@
+<div style="display: flex; flex-direction: column; height: 100%;">
+  <div style="flex-grow: 1;">
+    <ul style="list-style-type: none;">
+
+    </ul>
+  </div>
+  <form style="display: flex;">
+    <input type="text" style="flex-grow: 1">
+    <button type="submit">Send</button>
+  </form>
+</div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function() {
+    const ws = new WebSocket(`ws://${window.location.host}/ws`);
+    ws.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      if (data.type === "message") {
+        const ulDOM = document.querySelectorAll("ul")[0];
+        const liDOM = document.createElement("li");
+        liDOM.innerText = data.value;
+        ulDOM.appendChild(liDOM);
+      }
+    }
+    document.querySelectorAll("form")[0].onsubmit = function(event) {
+      event.preventDefault();
+      const inputDOM = document.querySelectorAll("input")[0];
+      ws.send(inputDOM.value);
+      inputDOM.value = "";
+      return false;
+    };
+  });
+</script>
